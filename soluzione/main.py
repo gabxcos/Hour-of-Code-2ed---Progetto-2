@@ -43,10 +43,19 @@ def modifica():
         nome = input(f"Nome contatto ({contatto['nome']}): ")
         if nome=="":
             nome = contatto['nome']
-        cognome = input("Cognome contatto: ")
-        email = input("Email: ")
-        num_casa = input("Telefono di casa: ")
-        num_cell = input("Cellulare: ")
+        cognome = input(f"Cognome contatto ({contatto['cognome']}): ")
+        if cognome=="":
+            cognome = contatto['cognome']
+        email = input(f"Email ({contatto['email']}): ")
+        if email=="":
+            email = contatto['email']
+        num_casa = input(f"Telefono di casa ({contatto['telefono']['casa']}): ")
+        if num_casa=="":
+            num_casa = contatto['telefono']['casa']
+        num_cell = input(f"Cellulare ({contatto['telefono']['cellulare']}): ")
+        if num_cell=="":
+            num_cell = contatto['telefono']['cellulare']
+
         nuovo_contatto = {
             "nome": nome,
             "cognome": cognome,
@@ -63,6 +72,25 @@ def modifica():
         print("Id non valido!")
 
 
+def ricerca():
+    """Cerca contatto"""
+
+    global rubrica
+
+    stringa = input("Chi stai cercando? ").lower()
+    lista = []
+    for id, contatto in rubrica.items():
+        if (stringa in contatto["nome"].lower()) or (stringa in contatto["cognome"].lower()) or (stringa in (contatto["nome"] +" "+ contatto["cognome"]).lower()):
+            lista.append((id, contatto))
+
+    if len(lista)>0:
+        for id, contatto in lista:
+            print(id, ":", contatto["nome"], contatto["cognome"])
+    else:
+        print("Non ho trovato nessun risultato!")
+
+
+
 def termina():
     """Termina programma"""
 
@@ -74,7 +102,9 @@ def termina():
 
 comandi = [
     # Aggiungi qui i tuoi comandi
+    ricerca,
     aggiungi,
+    modifica,
     termina
 ]
 
@@ -95,6 +125,6 @@ while continua:
         else:
             print("\n\n")
             comandi[i]()
-    except:
-        print("Non è stato inserito un numero!\n\n")
+    except Exception as e:
+        print(e)
         continue
