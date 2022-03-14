@@ -40,4 +40,4 @@ py -3 main.py
 py -3 -m pip install requests
 ```
 
-Una volta svolto l'esercizio in classe, questa repository sarà aggiornata con una soluzione funzionante nelal cartella `soluzione`.
+**Update:** questa repository è stata aggiornata con la soluzione guidata mostrata a lezione, la si può trovare sotto la cartella `soluzione`.
