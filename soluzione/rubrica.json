@@ -1,0 +1,22 @@
+[
+    {
+        "nome": "Mario",
+        "cognome": "Rossi",
+        "email": "mario.rossi@alice.it",
+        "telefono":
+        {
+            "casa": "0959876543",
+            "cellulare": "3319876543"
+        }
+    },
+    {
+        "nome": "Luigi",
+        "cognome": "Verdi",
+        "email": "luigi.verdi@gmail.com",
+        "telefono":
+        {
+            "casa": "0951020304",
+            "cellulare": "3311020304"
+        }
+    }
+]

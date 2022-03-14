@@ -1,8 +1,10 @@
-# Setup: popola il dizionario "rubrica" con dei valori finti generati online
-from ottieni_rubrica import ottieni_rubrica
-rubrica = ottieni_rubrica()
+import json
 
-prossimo_id = len(rubrica)  # indica il prossimo id libero utilizzabile per aggiungere un contatto
+rubrica = None
+
+with open("./rubrica.json", "r+") as rubrica_file:
+    rubrica = json.load(rubrica_file)
+
 
 #############################################################################
 # Definizione dei comandi
@@ -16,7 +18,7 @@ prossimo_id = len(rubrica)  # indica il prossimo id libero utilizzabile per aggi
 def aggiungi():
     """Aggiungi contatto"""
 
-    global rubrica, prossimo_id # la keyword "global" indica che useremo variabili dichiarate fuori dalla funzione
+    global rubrica # la keyword "global" indica che useremo variabili dichiarate fuori dalla funzione
     
     # Per ogni campo del contatto, richiediamo l'informazione usando "input"
     nome = input("Nome contatto: ")
@@ -35,10 +37,9 @@ def aggiungi():
         }
     }
 
-    # Inseriamo il nuovo contatto nel prossimo posto libero della rubrica
-    rubrica[str(prossimo_id)] = nuovo_contatto
-    # Aggiorniamo il prossimo posto libero
-    prossimo_id += 1
+    # Inseriamo il nuovo contatto in fondo alla rubrica
+    rubrica.append(nuovo_contatto)
+
     print(f"Ho aggiunto {nome} {cognome} alla tua rubrica!")
 
 #####
@@ -50,8 +51,15 @@ def modifica():
 
     # Ipotesi: bisogna già sapere l'id dell'utente da modificare
     id = input("Quale utente vuoi cercare? (Inserisci id): ")
-    # Controlliamo se l'id è presente tra le chiavi della rubrica
-    if id in rubrica:
+
+    if id.isdigit():
+        id = int(id)
+    else:
+        print("Inserisci un id valido!")
+        return
+
+    # Controlliamo se l'id è nel range della lista della rubrica
+    if id>=0 and id<len(rubrica):
         #... e in tal caso, salviamo in una variabile il contatto corrispondente a quell'id
         contatto = rubrica[id]
 
@@ -84,7 +92,7 @@ def modifica():
             "nome": nome,
             "cognome": cognome,
             "email": email,
-            "telefono": {
+            "telefono":{
                 "casa": num_casa,
                 "cellulare": num_cell
             }
@@ -95,7 +103,7 @@ def modifica():
         print(f"Ho modificato {nome} {cognome} nella tua rubrica!")
     else:
         # Se l'id non è presente nelle chiavi della rubrica...
-        print("Id non valido!")
+        print("Id fuori range!")
 
 
 #####
@@ -112,10 +120,8 @@ def ricerca():
 
     lista = [] # Teniamo una lista vuota dove metteremo i "match" con la stringa inserita
 
-    # rubrica.items ritorna una LISTA di TUPLE di 2 elementi, nella forma [(chiave1, valore1), (chiave2, valore2), ...]
-    for id, contatto in rubrica.items():
-        # ad ogni iterazione si ha: id=chiave (da "0" a "99"), contatto=valore {nome, cognome, ...}
-
+    # enumerate(rubrica ) ritorna una LISTA di TUPLE di 2 elementi, nella forma [(id1, valore1), (id2, valore2), ...]
+    for id, contatto in enumerate(rubrica):
         # Grazie ad Alberto Bella per il consiglio di "any"!
         # La funzione "any" è un "OR ad N-vie", ovvero ritorna True se una qualunque delle sue N condizioni è True
         if any([
@@ -146,8 +152,15 @@ def elimina():
 
     # Ipotesi: bisogna già sapere l'id dell'utente da eliminare
     id = input("Quale utente vuoi eliminare? (Inserisci id): ")
-    # Controlliamo se l'id è presente tra le chiavi della rubrica
-    if id in rubrica:
+
+    if id.isdigit():
+        id = int(id)
+    else:
+        print("Inserisci un id valido!")
+        return
+
+    # Controlliamo se l'id è nel range della lista della rubrica
+    if id>=0 and id<len(rubrica):
         #... e in tal caso, salviamo in una variabile il contatto corrispondente a quell'id
         contatto = rubrica[id]
 
@@ -156,8 +169,8 @@ def elimina():
         del rubrica[id]
 
     else:
-        # Se l'id non è presente nelle chiavi della rubrica...
-        print("Id non valido!")
+        # Se l'id non è presente nel range...
+        print("Id fuori range!")
 
 
 #####
@@ -167,6 +180,10 @@ def termina():
 
     global continua # Da questa variabile dipende il loop principale del programma
     print("Grazie per avere usato la mia rubrica!")
+
+    with open("./rubrica.json", "w") as rubrica_file:
+        json.dump(rubrica, rubrica_file)
+
     continua = False    # Settando "continua" a False interrompiamo il loop del programma
 
 #############################################################################
